@@ -131,3 +131,6 @@ unsetopt promptcr
 #個別設定を読み込む
 [ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
 
+alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
+export PATH=$PATH:/opt/boxen/nodenv/versions/v0.10.5/bin
+
