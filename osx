@@ -6,6 +6,7 @@ cp $HOME/dotfiles/.tmux.conf $HOME/
 cp -R $HOME/dotfiles/.vim $HOME/
 cp $HOME/dotfiles/.vimrc $HOME/
 cp $HOME/dotfiles/.zshrc $HOME/
+cp $HOME/dotfiles/.gitconfig $HOME/
 
 ## Trackpad
 defaults write -g com.apple.swipescrolldirection -bool false

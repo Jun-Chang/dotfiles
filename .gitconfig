@@ -1,0 +1,27 @@
+
+[credential]
+helper = /opt/boxen/bin/boxen-git-credential
+
+[core]
+excludesfile = /opt/boxen/config/git/gitignore
+
+[hub]
+protocol = https
+
+[user]
+    name = Jun-Chang
+    email = jun.tsuji@gmail.com
+
+[color]
+    ui = auto
+
+[merge]
+    keepBackup = false;
+    tool = p4merge
+
+[mergetool "p4merge"]
+    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
+
