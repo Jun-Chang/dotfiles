@@ -132,5 +132,6 @@ unsetopt promptcr
 [ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
 
 alias vim=/Applications/MacVim.app/Contents/MacOS/Vim
+alias view='/Applications/MacVim.app/Contents/MacOS/Vim -R'
 export PATH=$PATH:/opt/boxen/nodenv/versions/v0.10.5/bin
 
