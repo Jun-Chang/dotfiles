@@ -1,29 +1,22 @@
-"######## vi互換設定OFF (for using plugin) ########
-set nocompatible
-filetype off
-
-"######## neobundleによるプラグインの管理 ########
-" 初回起動時
-if has('vim_starting')
-    set runtimepath+=~/.vim/bundle/neobundle.vim/
-    call neobundle#rc(expand('~/.vim/bundle/'))
-endif
-
 "ファイル形式別プラグインのロードを有効化
 filetype plugin on
 filetype indent on
 
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/vimproc'
+if &compatible
+  set nocompatible
+endif
+set runtimepath+=~/.vim/dein/repos/github.com/Shougo/dein.vim
 
-" #### coffeescript
-NeoBundle 'kchmck/vim-coffee-script'
-au BufRead,BufNewFile,BufReadPre *.coffee   set filetype=coffee
-au BufWritePost *.coffee silent make! --bare
-nnoremap <silent> <C-C> :CoffeeCompile vert <CR><C-w>h
+call dein#begin(expand('~/.vim/dein'))
+
+call dein#add('Shougo/dein.vim')
+call dein#add('Shougo/vimproc.vim', {'build': 'make'})
+
+" #### elixir
+call dein#add('elixir-lang/vim-elixir')
 
 " #### vim-easymotion
-NeoBundle 'Lokaltog/vim-easymotion'
+call dein#add('Lokaltog/vim-easymotion')
 " ホームポジションに近いキーを使う
 let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
 " 「;」 + 何かにマッピング
@@ -35,20 +28,20 @@ hi EasyMotionTarget ctermbg=none ctermfg=red
 hi EasyMotionShade  ctermbg=none ctermfg=blue
 
 " #### clever-f
-NeoBundle 'rhysd/clever-f.vim'
+call dein#add('rhysd/clever-f.vim')
 
 " #### vim-seek TODO 使わないかも
-NeoBundle 'goldfeld/vim-seek'
+call dein#add('goldfeld/vim-seek')
 
 " #### yankRing
-NeoBundle 'YankRing.vim'
+call dein#add('YankRing.vim')
 nmap ,y :YRShow<CR>
 
 " #### undotree
-NeoBundle 'mbbill/undotree'
+call dein#add('mbbill/undotree')
 nmap ,u :UndotreeToggle<CR>
 let g:undotree_SetFocusWhenToggle = 1
-let g:undotree_SplitLocation = 'topleft'
+let g:undotree_WindowLayout = 'topleft'
 let g:undotree_SplitWidth = 35
 let g:undotree_diffAutoOpen = 1
 let g:undotree_diffpanelHeight = 25
@@ -58,15 +51,16 @@ let g:undotree_HighlightChangedText = 1
 let g:undotree_HighlightSyntax = "UnderLined"
 
 " ######## easybuffer
-NeoBundle 'troydm/easybuffer.vim'
+call dein#add('troydm/easybuffer.vim')
 nmap ,e :EasyBuffer<CR>
 
 " ######## qfixfrep
-NeoBundle 'fuenor/qfixgrep'
-nmap ,g :Grep -r
+call dein#add('fuenor/qfixgrep')
+""nmap ,g :Grep -r
+nnoremap <silent> ,g  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
 
 " ######## neocomplete
-NeoBundle 'Shougo/neocomplete'
+call dein#add('Shougo/neocomplete')
 " Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
 " Use smartcase.
@@ -89,8 +83,16 @@ let g:neocomplete#keyword_patterns['default'] = '¥h¥w*'
 inoremap <expr><C-g>  neocomplete#undo_completion()
 inoremap <expr><C-l>  neocomplete#complete_common_string()
 
+" ######## caw
+call dein#add('tyru/caw.vim')
+nmap \c <Plug>(caw:I:toggle)
+vmap \c <Plug>(caw:I:toggle)
+
+nmap \C <Plug>(caw:I:uncomment)
+vmap \C <Plug>(caw:I:uncomment)
+
 " ######## neosnippet
-NeoBundle 'Shougo/neosnippet'
+call dein#add('Shougo/neosnippet')
 " Plugin key-mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -110,12 +112,89 @@ if has('conceal')
 endif
 
 " ######## nerdtree'
-NeoBundle 'scrooloose/nerdtree'
+call dein#add('scrooloose/nerdtree')
 nmap ,t :NERDTree<CR>
+let g:NERDTreeChDirMode=2
+
+" ####### unite
+call dein#add('Shougo/unite.vim')
+nmap ,f :Unite buffer file<CR>
+
+" ####### unite outline
+call dein#add('shougo/unite-outline')
+let g:unite_split_rule = 'botright'
+
+" \ oでunite-outlineを縦分割でかつ閉じないように表示する
+nmap ,o :Unite -vertical -winwidth=30 -no-quit outline<CR>
+
+" ####### easybracket-vim
+call dein#add('MetalPhaeton/easybracket-vim')
+let g:unite_split_rule = 'botright'
+
+" ####### 検索ハイライトをクリア
+nnoremap <silent> <C-L> :noh<C-L><CR>
+
+" ####### ctags自動生成
+call dein#add('alpaca-tc/alpaca_tags', {
+              \    'depends': ['Shougo/vimproc'],
+              \    'autoload' : {
+              \       'commands' : [
+              \          { 'name' : 'AlpacaTagsBundle', 'complete': 'customlist,alpaca_tags#complete_source' },
+              \          { 'name' : 'AlpacaTagsUpdate', 'complete': 'customlist,alpaca_tags#complete_source' },
+              \          'AlpacaTagsSet', 'AlpacaTagsCleanCache', 'AlpacaTagsEnable', 'AlpacaTagsDisable', 'AlpacaTagsKillProcess', 'AlpacaTagsProcessStatus',
+              \       ],
+              \    }
+              \ })
+let g:alpaca_tags#config = {
+                       \    '_' : '-R --sort=yes',
+                       \    'ruby': '--languages=+Ruby',
+                       \ }
+augroup AlpacaTags
+  autocmd!
+  if exists(':AlpacaTags')
+    autocmd BufWritePost Gemfile AlpacaTagsBundle
+    autocmd BufEnter * AlpacaTagsSet
+    autocmd BufWritePost * AlpacaTagsUpdate
+  endif
+augroup END
+
+" ####### switch.vim
+call dein#add('AndrewRadev/switch.vim')
+nnoremap - :Switch<CR>
+
+" ###### openbrowser.vim
+call dein#add('tyru/open-browser.vim')
+
+" ###### react
+call dein#add('pangloss/vim-javascript')
+call dein#add('mxw/vim-jsx')
+let g:jsx_ext_required = 0
+let g:syntastic_javascript_checkers=['jsxhint']
+
+call dein#add('scrooloose/syntastic')
+call dein#add('pmsorhaindo/syntastic-local-eslint.vim')
+" ref. https://github.com/scrooloose/syntastic#settings"
+" エラー行に sign を表示
+let g:syntastic_enable_signs = 1
+" location list を常に更新
+let g:syntastic_always_populate_loc_list = 0
+" location list を常に表示
+let g:syntastic_auto_loc_list = 0
+" ファイルを開いた時にチェックを実行する
+let g:syntastic_check_on_open = 1
+" :wq で終了する時もチェックする
+let g:syntastic_check_on_wq = 0
+
+call dein#end()
+
+let g:netrw_nogx = 1 " disable netrw's gx mapping.
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
+
 
 "######## キーマップ設定 ########
-" esc => ctr + j
-imap <C-j> <esc>
+" esc => ctr + w
+imap <C-w> <esc>
 
 " 表示行単位で行移動する
 nnoremap j gj
@@ -128,68 +207,6 @@ nnoremap / /\v
 map <kPlus> <C-W>+
 map <kMinus> <C-W>-
 
-""######## 文字コード設定 TODO いつか見直す ########
-"if &encoding !=# 'utf-8'
-"  set encoding=japan
-"  set fileencoding=japan
-"endif
-"
-"if has('iconv')
-"  let s:enc_euc = 'euc-jp'
-"  let s:enc_jis = 'iso-2022-jp'
-"
-"  " iconvがeucJP-msに対応しているかをチェック
-"  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-"    let s:enc_euc = 'eucjp-ms'
-"    let s:enc_jis = 'iso-2022-jp-3'
-"  " iconvがJISX0213に対応しているかをチェック
-"  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-"    let s:enc_euc = 'euc-jisx0213'
-"    let s:enc_jis = 'iso-2022-jp-3'
-"  endif
-"
-"  " fileencodingsを構築
-"  if &encoding ==# 'utf-8'
-"    let s:fileencodings_default = &fileencodings
-"    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-"    let &fileencodings = &fileencodings .','. s:fileencodings_default
-"    unlet s:fileencodings_default
-"  else
-"    let &fileencodings = &fileencodings .','. s:enc_jis
-"    set fileencodings+=utf-8,ucs-2le,ucs-2
-"    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-"      set fileencodings+=cp932
-"      set fileencodings-=euc-jp
-"      set fileencodings-=euc-jisx0213
-"      set fileencodings-=eucjp-ms
-"      let &encoding = s:enc_euc
-"      let &fileencoding = s:enc_euc
-"    else
-"      let &fileencodings = &fileencodings .','. s:enc_euc
-"    endif
-"  endif
-"
-"  " 定数を処分
-"  unlet s:enc_euc
-"  unlet s:enc_jis
-"endif
-"
-"" 日本語を含まない場合は fileencoding に encoding を使うようにする
-"if has('autocmd')
-"  function! AU_ReCheck_FENC()
-"    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-"      let &fileencoding=&encoding
-"    endif
-"  endfunction
-"  autocmd BufReadPost * call AU_ReCheck_FENC()
-"endif
-"" 改行コードの自動認識
-"set fileformats=unix,dos,mac
-"
-"" □とか○の文字があってもカーソル位置がずれないようにする
-"if exists('&ambiwidth')
-"  set ambiwidth=double
-"endif
 
 "######## 編集設定 ########
 
@@ -235,6 +252,8 @@ set hlsearch
 set laststatus=2
 " ステータスラインに文字コードと改行文字を表示する
 set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
+" ステータスライン色
+highlight StatusLine term=bold cterm=bold ctermfg=black ctermbg=white
 
 " ######## タブ設定 ########
 " Anywhere SID.
@@ -271,4 +290,17 @@ nmap tn :tabnew
 
 " ######## タグジャンプ TODO gtags試す ########
 set tags+=~/.tags
+
+au BufRead,BufNewFile,BufReadPre *.snip   set filetype=snip
+
+set clipboard+=unnamed
+
+" ####### indent"
+augroup fileTypeIndent
+    autocmd!
+    autocmd BufNewFile,BufRead *.rb setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.{js,jsx} setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd BufNewFile,BufRead *.{css,scss} setlocal tabstop=2 softtabstop=2 shiftwidth=2
+augroup END
+
 
